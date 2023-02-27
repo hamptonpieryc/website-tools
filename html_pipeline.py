@@ -1,4 +1,5 @@
 from html.parser import HTMLParser
+from transformer import Transformer
 
 
 class BaseParser(HTMLParser):
@@ -6,10 +7,15 @@ class BaseParser(HTMLParser):
     Normally a class should just override handle_captured method
     """
 
-    def __init__(self, tag_names, content_buf):
+    def __init__(self, content_buf, transformers=[]):
         HTMLParser.__init__(self=self, convert_charrefs=False)
         self.capture_mode = False
-        self.tag_names = tag_names
+        self.transformers = transformers
+
+        x = map(lambda x: x.outer_tag, self.transformers)
+        print(list(x))
+
+        self.tag_names = list(map(lambda x: x.outer_tag, self.transformers))
         self.current_tag = ''
         self.capture_buffer = []
         self.content_buffer = content_buf
@@ -61,6 +67,6 @@ class BaseParser(HTMLParser):
         self.__pick_buffer().append('&' + name + ';')
 
     def handle_captured(self, tag_name, captured):
-        self.content_buffer.extend(captured)
-
-
+        fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
+        transformer = Transformer(self.transformers[0])
+        self.content_buffer.extend(transformer.transform(fully_captured))
