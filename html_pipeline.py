@@ -68,5 +68,10 @@ class BaseParser(HTMLParser):
 
     def handle_captured(self, tag_name, captured):
         fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
-        transformer = Transformer(self.transformers[0])
-        self.content_buffer.extend(transformer.transform(fully_captured))
+        filtered = list(filter(lambda t: t.outer_tag == tag_name, self.transformers))
+        if len(filtered) == 1:
+            transformer = Transformer(filtered[0])
+            self.content_buffer.extend(transformer.transform(fully_captured))
+        else:
+            self.content_buffer.extend(fully_captured)
+

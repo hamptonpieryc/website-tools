@@ -1,10 +1,13 @@
 from html_pipeline import BaseParser
 from transformer import Transform
-from transformer import Transformer
 
 
 # some simple transformers
 class FooTransform(Transform):
+
+    def __init__(self, ):
+        self.outer_tag = "foo-content"
+
     def transform(self, nodes: list) -> str:
         result = ''
         for node in nodes:
@@ -14,6 +17,10 @@ class FooTransform(Transform):
 
 
 class BarTransform(Transform):
+
+    def __init__(self, ):
+        self.outer_tag = "bar-content"
+
     def transform(self, nodes: list) -> str:
         result = ''
         for node in nodes:
@@ -72,6 +79,31 @@ def test_should_apply_single_transformer_to_html():
          </html>"""
 
     buffer = []
-    parser = BaseParser(buffer, [FooTransform("foo-content")])
+    parser = BaseParser(buffer, [FooTransform()])
+    parser.feed(raw_html)
+    assert ''.join(buffer) == output_html
+
+
+def test_should_apply_multiple_transformers_to_html():
+    raw_html = """
+         <html>
+         <body>
+             <foo-content><p>Foo</p></foo-content>
+             <bar-content><header>Hello World</header></bar-content>
+             <leave-me-alone-content>I want to be alone</leave-me-alone-content>
+         </body>
+         </html>"""
+
+    output_html = """
+         <html>
+         <body>
+             <div>FOO</div>
+             <h1>HELLO WORLD</h1>
+             <leave-me-alone-content>I want to be alone</leave-me-alone-content>
+         </body>
+         </html>"""
+
+    buffer = []
+    parser = BaseParser(buffer, [FooTransform(), BarTransform()])
     parser.feed(raw_html)
     assert ''.join(buffer) == output_html
