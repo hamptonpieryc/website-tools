@@ -1,5 +1,6 @@
 from build import ContentTransformer
 
+
 def test_foo():
     def shout(text):
         return text.upper()
@@ -23,9 +24,8 @@ def test_should_transform_single_matching_tag():
     thistuple = ("apple", "banana", "cherry")
     print(thistuple)
 
-
     def transform(tags):
         print(tags)
 
-    transformed = ContentTransformer( ['content/p'], transform).feed(raw)
+    transformed = ContentTransformer(['content/p'], transform).feed(raw)
     print(transformed)
