@@ -73,7 +73,7 @@ class BaseParser(HTMLParser):
 # Normally a class should just override handle_captured method
 #
 class ContentTransformer(HTMLParser):
-    def __init__(self, paths, content_buf, xx):
+    def __init__(self, paths, content_buf):
         HTMLParser.__init__(self=self, convert_charrefs=False)
         self.capture_mode = False
         self.paths = paths

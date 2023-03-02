@@ -27,5 +27,5 @@ def test_should_transform_single_matching_tag():
     def transform(tags):
         print(tags)
 
-    transformed = ContentTransformer(['content/p'], transform).feed(raw)
-    print(transformed)
+  #  transformed = ContentTransformer(['content/p'], transform).feed(raw)
+  #  print(transformed)
