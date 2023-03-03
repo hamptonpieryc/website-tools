@@ -3,8 +3,8 @@ from transformer import Transformer
 
 
 def test_transform_content():
-    raw = '<content><p>Foo</p></content>xcxc'
-    expected = '<div>FOO</div>'
+    raw = '<content><p>Foo</p></content>'
+    expected = '<div>FOO</div>ggg'
 
     class FooTransform(Transform):
         def transform(self, nodes: list) -> str:
