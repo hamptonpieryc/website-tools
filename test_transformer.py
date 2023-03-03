@@ -3,7 +3,7 @@ from transformer import Transformer
 
 
 def test_transform_content():
-    raw = '<content><p>Foo</p></content>'
+    raw = '<content><p>Foo</p></content>xcxc'
     expected = '<div>FOO</div>'
 
     class FooTransform(Transform):
