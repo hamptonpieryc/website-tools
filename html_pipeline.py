@@ -11,10 +11,6 @@ class BaseParser(HTMLParser):
         HTMLParser.__init__(self=self, convert_charrefs=False)
         self.capture_mode = False
         self.transformers = transformers
-
-        x = map(lambda x: x.outer_tag, self.transformers)
-        print(list(x))
-
         self.tag_names = list(map(lambda x: x.outer_tag, self.transformers))
         self.current_tag = ''
         self.capture_buffer = []
