@@ -71,3 +71,17 @@ class BaseParser(HTMLParser):
         else:
             self.content_buffer.extend(fully_captured)
 
+
+class CaptureElementsParser(BaseParser):
+    """A html parser that scans for any elements that match the supplied tag_names and
+       for each found the content is captured and added to the list of captured content
+    """
+
+    def __init__(self, tag_names):
+        BaseParser.__init__(self, [])
+        self.tag_names = tag_names
+        self.captured = []
+
+    def handle_captured(self, tag_name, captured):
+        fully_captured = ''.join(captured)
+        self.captured.append((tag_name, fully_captured))

@@ -45,3 +45,12 @@ def test_content_panel_transform():
     transformer = Transformer(ContentPanelTransformer('hpyc-content-panel'))
     transformed = transformer.transform(raw)
     assert transformed.strip() == expected
+
+
+def test_combined_transform():
+    raw = dedent("""
+            <hypc-content>
+            <hpyc-top-panel>
+                <h1>Example Page</h1>
+            </hpyc-top-panel>
+       """)
