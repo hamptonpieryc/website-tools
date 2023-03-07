@@ -1,7 +1,7 @@
 from textwrap import dedent
 from hpyc_transformers import TopPanelTransformer
 from hpyc_transformers import ContentPanelTransformer
-from transformer import Transformer
+from html_transformer import Transformer
 
 
 def test_top_panel_transform():

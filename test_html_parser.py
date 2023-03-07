@@ -1,51 +1,6 @@
-from html_pipeline import BaseParser
-from html_pipeline import CaptureElementsParser
-from transformer import Transform
-from transformer import Transformer
-
-
-# some simple transformers
-class FooTransform(Transform):
-
-    def __init__(self):
-        self.outer_tag = "foo-content"
-
-    def transform(self, nodes: list) -> str:
-        result = ''
-        for node in nodes:
-            if node.tag == 'p':
-                result += '<div>' + str(node.text).upper() + '</div>'
-        return result
-
-
-class BarTransform(Transform):
-
-    def __init__(self):
-        self.outer_tag = "bar-content"
-
-    def transform(self, nodes: list) -> str:
-        result = ''
-        for node in nodes:
-            if node.tag == 'header':
-                result += '<h1>' + str(node.text).upper() + '</h1>'
-        return result
-
-
-class NestedTransform(Transform):
-    def __init__(self, outer_tag, transforms):
-        self.outer_tag = outer_tag
-        self.transforms = transforms
-
-    def transform(self, nodes: list) -> str:
-        result = ''
-        for node in nodes:
-            for transform in self.transforms:
-                if transform.outer_tag == node.tag:
-                    x = str(node)
-                    transformer = Transformer(transform)
-                    result += transformer.transform(node.text)
-
-        return result
+from html_parser import BaseParser
+from html_parser import CaptureElementsParser
+from common_test import FooTransform, BarTransform, NestedTransform
 
 
 def test_should_pass_html_through_pipeline_unaffected_if_no_transforms():
@@ -99,35 +54,11 @@ def test_should_produce_lookup_of_captured_elements():
     assert expected == parser.captured
 
 
-def test_should_nested_transformers():
-    raw_html = """
-            <html>
-            <body>
-                <nested>
-                <foo-content><p>Foo</p></foo-content>
-                </nested>
-            </body>
-            </html>"""
-
-    output_html = """
-           <html>
-           <body>
-              <div>FOO</div>
-           </body>
-           </html>"""
-
-    # buffer = []
-    # nested_transform = NestedTransform("nested", [FooTransform(), BarTransform()])
-    # parser = BaseParser(buffer, [nested_transform])
-    # parser.feed(raw_html)
-    # assert ''.join(buffer) == output_html
-
-
 def test_should_apply_single_transformer_to_html():
     raw_html = """
          <html>
          <body>
-             <foo-content><p>Foo</p></foo-content>
+             <foo><p>Foo</p></foo>
          </body>
          </html>"""
 
@@ -148,8 +79,8 @@ def test_should_apply_multiple_transformers_to_html():
     raw_html = """
          <html>
          <body>
-             <foo-content><p>Foo</p></foo-content>
-             <bar-content><header>Hello World</header></bar-content>
+             <foo><p>Foo</p></foo>
+             <bar><header>Hello World</header></bar>
              <leave-me-alone-content>I want to be alone</leave-me-alone-content>
          </body>
          </html>"""
@@ -167,3 +98,28 @@ def test_should_apply_multiple_transformers_to_html():
     parser = BaseParser(buffer, [FooTransform(), BarTransform()])
     parser.feed(raw_html)
     assert ''.join(buffer) == output_html
+
+
+def test_should_apply_nested_transformers():
+    raw_html = """
+            <html>
+            <body>
+                <nested>
+                <foo><p>Foo</p></foo>
+                </nested>
+            </body>
+            </html>"""
+
+    output_html = """
+           <html>
+           <body>
+              <div>FOO</div>
+           </body>
+           </html>"""
+
+    nested = NestedTransform(outer_tag='nested', transforms=[FooTransform()])
+    buffer = []
+    parser = BaseParser(buffer, [nested])
+    #parser.feed(raw_html)
+    #assert ''.join(buffer) == output_html
+

@@ -1,4 +1,4 @@
-from transformer import Transform
+from html_transformer import Transform
 
 
 class TopPanelTransformer(Transform):

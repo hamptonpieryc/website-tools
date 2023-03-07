@@ -1,5 +1,5 @@
 from html.parser import HTMLParser
-from transformer import Transformer
+from html_transformer import Transformer
 
 
 class BaseParser(HTMLParser):
