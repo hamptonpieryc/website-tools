@@ -64,5 +64,3 @@ class BaseParser(HTMLParser):
         fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
         print(fully_captured)
         self.content_buffer.extend(fully_captured)
-
-

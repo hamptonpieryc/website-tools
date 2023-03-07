@@ -1,5 +1,29 @@
-from html_transformer import Transformer, NestedTransform, TransformingParser, CaptureElementsParser
-from common_test import FooTransform, BarTransform
+from html_transformer import Transform, Transformer, NestedTransform, TransformingParser, CaptureElementsParser
+
+
+class FooTransform(Transform):
+    def __init__(self):
+        Transform.__init__(self=self, outer_tag="foo")
+
+    def transform(self, nodes: list) -> str:
+        result = ''
+        for node in nodes:
+            if node.tag == 'p':
+                result += '<div>' + str(node.text).upper() + '</div>'
+        return result
+
+
+class BarTransform(Transform):
+
+    def __init__(self):
+        self.outer_tag = "bar"
+
+    def transform(self, nodes: list) -> str:
+        result = ''
+        for node in nodes:
+            if node.tag == 'header':
+                result += '<h1>' + str(node.text).upper() + '</h1>'
+        return result
 
 
 def test_should_transform_foo_content():
@@ -10,14 +34,22 @@ def test_should_transform_foo_content():
     assert transformer.transform(raw) == expected
 
 
+def test_should_preserve_if_no_transform():
+    raw = '<not-foo><p>Foo</p></not-foo>'
+    expected = '<not-foo><p>Foo</p></not-foo>'
+
+    transformer = Transformer(FooTransform())
+    assert transformer.transform(raw) == expected
+
+
 def test_should_transform_nested_content():
     raw = '<nested><foo><p>Foo</p></foo></nested>'
-    expected = '<div>FOO</div>'
+    expected = '<div>FOO</div>\n'
 
     nested = NestedTransform(outer_tag='nested', transforms=[FooTransform()])
     transformer = Transformer(nested)
     transformer.transform(raw)
-    # assert transformer.transform(raw) == expected
+    assert transformer.transform(raw) == expected
 
 
 def test_should_apply_single_transformer_to_html():
@@ -106,7 +138,7 @@ def test_should_apply_nested_transformers():
             </body>
             </html>"""
 
-    nested = NestedTransform(outer_tag='nested', transforms=[FooTransform(),BarTransform()])
+    nested = NestedTransform(outer_tag='nested', transforms=[FooTransform(), BarTransform()])
     buffer = []
     parser = TransformingParser(buffer, [nested])
     parser.feed(raw_html)

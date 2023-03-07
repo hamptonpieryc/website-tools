@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ElementTree
+
 from html_parser import BaseParser
 
 
@@ -94,5 +95,10 @@ class Transformer:
             return ''.join(buffer)
         else:
             tree = ElementTree.fromstring('<root>' + raw + "</root>")
-            nodes = tree.find(".").find(self.__the_transform.outer_tag).findall("*")
-            return self.__the_transform.transform(nodes)
+
+            node = tree.find(".").find(self.__the_transform.outer_tag)
+            if node is not None:
+                nodes = node.findall("*")
+                return self.__the_transform.transform(nodes)
+            else:
+                return raw

@@ -1,6 +1,4 @@
 from html_parser import BaseParser
-from common_test import FooTransform, BarTransform
-from html_transformer import NestedTransform
 
 
 def test_should_pass_html_through_pipeline_unaffected_if_no_transforms():
@@ -68,6 +66,13 @@ def test_not_care_if_tag_is_missing():
 
 
 def test_subclass_can_override_handle_captured():
+    class TestParser(BaseParser):
+        def __init__(self, content_buffer):
+            BaseParser.__init__(self, content_buffer, ['foo'])
+
+        def handle_captured(self, tag_name, captured):
+            self.content_buffer.extend(''.join(captured).upper())
+
     raw_html = """
         <html>
         <body>
@@ -84,15 +89,7 @@ def test_subclass_can_override_handle_captured():
         </html>
         """
 
-    class TestParser(BaseParser):
-        def __init__(self, content_buffer):
-            BaseParser.__init__(self, content_buffer, ['foo'])
-
-        def handle_captured(self, tag_name, captured):
-            self.content_buffer.extend(''.join(captured).upper())
-
     buffer = []
     parser = TestParser(buffer)
     parser.feed(raw_html)
     assert ''.join(buffer) == expected_html
-
