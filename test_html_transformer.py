@@ -1,4 +1,4 @@
-from html_transformer import Transformer, NestedTransform, TransformingParser
+from html_transformer import Transformer, NestedTransform, TransformingParser, CaptureElementsParser
 from common_test import FooTransform, BarTransform
 
 
@@ -64,6 +64,22 @@ def test_should_apply_multiple_transformers_to_html():
     parser = TransformingParser(buffer, [FooTransform(), BarTransform()])
     parser.feed(raw_html)
     assert ''.join(buffer) == output_html
+
+
+def test_should_produce_lookup_of_captured_elements():
+    raw_html = """
+               <html>
+               <body>
+                   <foo><p>Foo</p></foo>
+                   <bar>BAR</bar>
+               </body>
+               </html>"""
+
+    expected = [('foo', '<p>Foo</p>'), ('bar', 'BAR')]
+
+    parser = CaptureElementsParser(['foo', 'bar'])
+    parser.feed(raw_html)
+    assert expected == parser.captured
 
 
 def test_should_apply_nested_transformers():
