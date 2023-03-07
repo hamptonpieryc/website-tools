@@ -1,4 +1,5 @@
 from html_parser import BaseParser
+from html_parser import TransformingParser
 from html_parser import CaptureElementsParser
 from common_test import FooTransform, BarTransform
 from html_transformer import NestedTransform
@@ -38,6 +39,66 @@ def test_should_preserve_entity_ref_and_char_ref_in_html():
     assert ''.join(buffer) == raw_html
 
 
+def test_should_simply_pass_on_captured_tag():
+    raw_html = """
+        <html>
+        <body>
+           <foo>foobar</foo>
+        </body>
+        </html>
+        """
+
+    buffer = []
+    parser = BaseParser(buffer, "foo")
+    parser.feed(raw_html)
+    assert ''.join(buffer) == raw_html
+
+
+def test_not_care_if_tag_is_missing():
+    raw_html = """
+        <html>
+        <body>
+           <not-foo>foobar</not-foo>
+        </body>
+        </html>
+        """
+
+    buffer = []
+    parser = BaseParser(buffer, "foo")
+    parser.feed(raw_html)
+    assert ''.join(buffer) == raw_html
+
+
+def test_subclass_can_override_handle_captured():
+    raw_html = """
+        <html>
+        <body>
+           <foo>foobar</foo>
+        </body>
+        </html>
+        """
+
+    expected_html = """
+        <html>
+        <body>
+           FOOBAR
+        </body>
+        </html>
+        """
+
+    class TestParser(BaseParser):
+        def __init__(self, content_buffer):
+            BaseParser.__init__(self, content_buffer, ['foo'])
+
+        def handle_captured(self, tag_name, captured):
+            self.content_buffer.extend(''.join(captured).upper())
+
+    buffer = []
+    parser = TestParser(buffer)
+    parser.feed(raw_html)
+    assert ''.join(buffer) == expected_html
+
+
 def test_should_produce_lookup_of_captured_elements():
     raw_html = """
                <html>
@@ -71,7 +132,7 @@ def test_should_apply_single_transformer_to_html():
          </html>"""
 
     buffer = []
-    parser = BaseParser(buffer, [FooTransform()])
+    parser = TransformingParser(buffer, [FooTransform()])
     parser.feed(raw_html)
     assert ''.join(buffer) == output_html
 
@@ -96,7 +157,7 @@ def test_should_apply_multiple_transformers_to_html():
          </html>"""
 
     buffer = []
-    parser = BaseParser(buffer, [FooTransform(), BarTransform()])
+    parser = TransformingParser(buffer, [FooTransform(), BarTransform()])
     parser.feed(raw_html)
     assert ''.join(buffer) == output_html
 
@@ -121,6 +182,5 @@ def test_should_apply_nested_transformers():
     nested = NestedTransform(outer_tag='nested', transforms=[FooTransform()])
     buffer = []
     parser = BaseParser(buffer, [nested])
-    #parser.feed(raw_html)
-    #assert ''.join(buffer) == output_html
-
+    # parser.feed(raw_html)
+    # assert ''.join(buffer) == output_html

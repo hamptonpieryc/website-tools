@@ -7,12 +7,11 @@ class BaseParser(HTMLParser):
     Normally a class should just override handle_captured method
     """
 
-    def __init__(self, content_buf, transformers=[]):
+    def __init__(self, content_buf, tag_names=[]):
         HTMLParser.__init__(self=self, convert_charrefs=False)
         self.capture_mode = False
-        self.transformers = transformers
-        self.tag_names = list(map(lambda x: x.outer_tag, self.transformers))
         self.current_tag = ''
+        self.tag_names = tag_names
         self.capture_buffer = []
         self.content_buffer = content_buf
 
@@ -61,6 +60,22 @@ class BaseParser(HTMLParser):
 
     def handle_entityref(self, name):
         self.__pick_buffer().append('&' + name + ';')
+
+    def handle_captured(self, tag_name, captured):
+        fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
+        print(fully_captured)
+        self.content_buffer.extend(fully_captured)
+
+
+class TransformingParser(BaseParser):
+    """A parser that can apply transforms
+    """
+
+    def __init__(self, content_buffer, transformers):
+        BaseParser.__init__(self, content_buffer)
+        self.transformers = transformers
+        self.tag_names = list(map(lambda x: x.outer_tag, self.transformers))
+        self.captured = []
 
     def handle_captured(self, tag_name, captured):
         fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
