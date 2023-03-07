@@ -73,21 +73,25 @@ class Transformer:
 
     def transform(self, raw):
         if isinstance(self.__the_transform, NestedTransform):
-            tag_names = list(map(lambda x: x.outer_tag, self.__the_transform.transforms))
+            # step 1 - capture each of the possible elements as a full snippet of html
+            tag_names = list(map(lambda _: _.outer_tag, self.__the_transform.transforms))
             capture = CaptureElementsParser(tag_names)
             capture.feed(raw)
+
+            # step 2 - loop through each of the captured snippets
+            # and apply the transform.
             buffer = []
-            for x in capture.captured:
-                t = x[0]
-                partial_html = '<root><' + t + '>' + x[1] + "</" + t + "></root>"
+            for captured in capture.captured:
+                tag = captured[0]
+                partial_html = '<root><' + tag + '>' + captured[1] + "</" + tag + "></root>"
                 tree = ElementTree.fromstring(partial_html)
-                nodes = tree.find(".").find(t).findall("*")
-                for t in self.__the_transform.transforms:
-                    buffer.append(t.transform(nodes))
-                    buffer.append("\n")
+                nodes = tree.find(".").find(tag).findall("*")
+                for trans in self.__the_transform.transforms:
+                    if trans.outer_tag == tag:
+                        buffer.append(trans.transform(nodes))
+                        buffer.append("\n")
 
             return ''.join(buffer)
-
         else:
             tree = ElementTree.fromstring('<root>' + raw + "</root>")
             nodes = tree.find(".").find(self.__the_transform.outer_tag).findall("*")

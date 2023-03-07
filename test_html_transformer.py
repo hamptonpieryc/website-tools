@@ -89,6 +89,8 @@ def test_should_apply_nested_transformers():
                 <nested>
                     <foo><p>Foo</p></foo>
                     <foo><p>Boo</p></foo>
+                    <p>skip me</p>
+                    <bar><header>Hello World</header></bar>
                 </nested>
             </body>
             </html>"""
@@ -99,11 +101,12 @@ def test_should_apply_nested_transformers():
             <body>
                 <div>FOO</div>
 <div>BOO</div>
+<h1>HELLO WORLD</h1>
 
             </body>
             </html>"""
 
-    nested = NestedTransform(outer_tag='nested', transforms=[FooTransform()])
+    nested = NestedTransform(outer_tag='nested', transforms=[FooTransform(),BarTransform()])
     buffer = []
     parser = TransformingParser(buffer, [nested])
     parser.feed(raw_html)
