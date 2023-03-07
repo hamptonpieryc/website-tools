@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ElementTree
+from html_parser import BaseParser
 
 
 class Transform:
@@ -13,6 +14,7 @@ class Transform:
 
 
 class NestedTransform(Transform):
+    """A transform that nests one or more inner transforms"""
     def __init__(self, outer_tag, transforms):
         self.outer_tag = outer_tag
         self.transforms = transforms
@@ -27,6 +29,26 @@ class NestedTransform(Transform):
                     result += transformer.transform(node.text)
 
         return result
+
+
+class TransformingParser(BaseParser):
+    """A parser that can apply one or more transforms
+    """
+
+    def __init__(self, content_buffer, transformers):
+        BaseParser.__init__(self, content_buffer)
+        self.transformers = transformers
+        self.tag_names = list(map(lambda x: x.outer_tag, self.transformers))
+        self.captured = []
+
+    def handle_captured(self, tag_name, captured):
+        fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
+        filtered = list(filter(lambda t: t.outer_tag == tag_name, self.transformers))
+        if len(filtered) == 1:
+            transformer = Transformer(filtered[0])
+            self.content_buffer.extend(transformer.transform(fully_captured))
+        else:
+            self.content_buffer.extend(fully_captured)
 
 
 class Transformer:

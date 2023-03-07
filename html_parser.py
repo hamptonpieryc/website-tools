@@ -1,5 +1,4 @@
 from html.parser import HTMLParser
-from html_transformer import Transformer
 
 
 class BaseParser(HTMLParser):
@@ -66,25 +65,6 @@ class BaseParser(HTMLParser):
         print(fully_captured)
         self.content_buffer.extend(fully_captured)
 
-
-class TransformingParser(BaseParser):
-    """A parser that can apply transforms
-    """
-
-    def __init__(self, content_buffer, transformers):
-        BaseParser.__init__(self, content_buffer)
-        self.transformers = transformers
-        self.tag_names = list(map(lambda x: x.outer_tag, self.transformers))
-        self.captured = []
-
-    def handle_captured(self, tag_name, captured):
-        fully_captured = "<" + tag_name + ">" + ''.join(captured) + "</" + tag_name + ">"
-        filtered = list(filter(lambda t: t.outer_tag == tag_name, self.transformers))
-        if len(filtered) == 1:
-            transformer = Transformer(filtered[0])
-            self.content_buffer.extend(transformer.transform(fully_captured))
-        else:
-            self.content_buffer.extend(fully_captured)
 
 
 class CaptureElementsParser(BaseParser):
