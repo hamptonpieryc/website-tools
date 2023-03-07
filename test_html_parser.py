@@ -1,6 +1,7 @@
 from html_parser import BaseParser
 from html_parser import CaptureElementsParser
-from common_test import FooTransform, BarTransform, NestedTransform
+from common_test import FooTransform, BarTransform
+from html_transformer import NestedTransform
 
 
 def test_should_pass_html_through_pipeline_unaffected_if_no_transforms():

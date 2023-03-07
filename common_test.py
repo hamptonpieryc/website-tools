@@ -28,19 +28,3 @@ class BarTransform(Transform):
                 result += '<h1>' + str(node.text).upper() + '</h1>'
         return result
 
-
-class NestedTransform(Transform):
-    def __init__(self, outer_tag, transforms):
-        self.outer_tag = outer_tag
-        self.transforms = transforms
-
-    def transform(self, nodes: list) -> str:
-        result = ''
-        for node in nodes:
-            for transform in self.transforms:
-                if transform.outer_tag == node.tag:
-                    x = str(node)
-                    transformer = Transformer(transform)
-                    result += transformer.transform(node.text)
-
-        return result
