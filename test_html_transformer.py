@@ -87,20 +87,24 @@ def test_should_apply_nested_transformers():
             <html>
             <body>
                 <nested>
-                <foo><p>Foo</p></foo>
+                    <foo><p>Foo</p></foo>
+                    <foo><p>Boo</p></foo>
                 </nested>
             </body>
             </html>"""
 
+    # note - the current implementation does not preserve leading whitespace nicely
     output_html = """
-           <html>
-           <body>
-              <div>FOO</div>
-           </body>
-           </html>"""
+            <html>
+            <body>
+                <div>FOO</div>
+<div>BOO</div>
+
+            </body>
+            </html>"""
 
     nested = NestedTransform(outer_tag='nested', transforms=[FooTransform()])
     buffer = []
     parser = TransformingParser(buffer, [nested])
     parser.feed(raw_html)
-    # assert ''.join(buffer) == output_html
+    assert ''.join(buffer) == output_html

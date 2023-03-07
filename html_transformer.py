@@ -15,6 +15,7 @@ class Transform:
 
 class NestedTransform(Transform):
     """A transform that nests one or more inner transforms"""
+
     def __init__(self, outer_tag, transforms):
         self.outer_tag = outer_tag
         self.transforms = transforms
@@ -50,6 +51,7 @@ class TransformingParser(BaseParser):
         else:
             self.content_buffer.extend(fully_captured)
 
+
 class CaptureElementsParser(BaseParser):
     """A html parser that scans for any elements that match the supplied tag_names and
        for each found the content is captured and added to the list of captured content
@@ -71,14 +73,20 @@ class Transformer:
 
     def transform(self, raw):
         if isinstance(self.__the_transform, NestedTransform):
-            print("hhh")
             tag_names = list(map(lambda x: x.outer_tag, self.__the_transform.transforms))
-            # capture = CaptureElementsParser(tag_names)
-            # capture.feed(raw)
-            # for x in capture.captured:
-            #     print(x)
+            capture = CaptureElementsParser(tag_names)
+            capture.feed(raw)
+            buffer = []
+            for x in capture.captured:
+                t = x[0]
+                partial_html = '<root><' + t + '>' + x[1] + "</" + t + "></root>"
+                tree = ElementTree.fromstring(partial_html)
+                nodes = tree.find(".").find(t).findall("*")
+                for t in self.__the_transform.transforms:
+                    buffer.append(t.transform(nodes))
+                    buffer.append("\n")
 
-            return ""
+            return ''.join(buffer)
 
         else:
             tree = ElementTree.fromstring('<root>' + raw + "</root>")
