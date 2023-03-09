@@ -1,7 +1,12 @@
 from html_transformer import Transform
+from html_transformer import NestedTransform
 
 
 class TopPanelTransformer(Transform):
+
+    def __init__(self):
+        Transform.__init__(self, 'hpyc-top-panel')
+
     def transform(self, nodes: list) -> str:
         result = '<div class="columns col-gapless hpyc-section\">\n'
         result += '\t<div class=\"column col-12\">\n'
@@ -18,6 +23,10 @@ class TopPanelTransformer(Transform):
 
 
 class ContentPanelTransformer(Transform):
+
+    def __init__(self):
+        Transform.__init__(self, 'hpyc-content-panel')
+
     def transform(self, nodes: list) -> str:
         result = '\n'
         result += '<div class="columns col-gapless hpyc-section\">\n'
@@ -30,3 +39,9 @@ class ContentPanelTransformer(Transform):
         result += "\t" + '</div>\n'
         result += '</div>\n'
         return result.replace("\t", "    ")  # 4 spaces per tab for consistent formatting
+
+
+class ContentPageTransformer(NestedTransform):
+
+    def __init__(self):
+        NestedTransform.__init__(self, 'hpyc-content', [TopPanelTransformer(), ContentPanelTransformer()])

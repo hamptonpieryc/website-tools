@@ -26,7 +26,6 @@ class NestedTransform(Transform):
         for node in nodes:
             for transform in self.transforms:
                 if transform.outer_tag == node.tag:
-                    x = str(node)
                     transformer = Transformer(transform)
                     result += transformer.transform(node.text)
 
