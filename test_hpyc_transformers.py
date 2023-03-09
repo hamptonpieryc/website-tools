@@ -43,7 +43,8 @@ def test_content_panel_transform():
     raw = dedent("""
         <hpyc-content-panel>
             <header>Example</header>
-            <p>Lorem Ipsum...</p>
+            <p>Paragraph 1</p>
+            <p>Paragraph Two</p>
             <img href=\"image.jpg\"></img>
         </hpyc-content-panel>""")
 
@@ -56,6 +57,11 @@ def test_content_panel_transform():
             </div>
             <div class="column col-9">
                 <h2>Example</h2>
+                <p>Paragraph 1
+                    <button class="hpyc-more" id="bt2" onclick="expand('bt2','ct2')"></button>
+                </p>
+                <p>Paragraph Two
+                </p>
             </div>
         </div>
       """).strip()

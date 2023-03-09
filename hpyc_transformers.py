@@ -90,6 +90,14 @@ class ContentPanelTransformer(Transform):
         result += '\t<div class=\"column col-9\">\n'
         result += '\t\t<h2>' + header + '</h2>\n'
 
+        first_para = True
+        for para in paras:
+            result += '\t\t<p>' + para + '\n'
+            if first_para and len(paras) > 1:
+                result += '\t\t\t<button class="hpyc-more" id="bt2" onclick="expand(\'bt2\',\'ct2\')"></button>\n'
+            result += '\t\t</p>\n'
+            first_para = False
+
 
         """
           <div class="column col-3 ">
