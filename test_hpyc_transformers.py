@@ -1,7 +1,18 @@
 from textwrap import dedent
-from hpyc_transformers import TopPanelTransformer, ContentPageTransformer, ContentPanelTransformer
+from hpyc_transformers import TopPanelTransformer, ContentPageTransformer, ContentPanelTransformer, IdGenerator
 from html_transformer import Transformer
 import re
+
+
+class FixedIdGenerator(IdGenerator):
+
+    def __init__(self):
+        self.index = -1
+        self.ids = ["id1", "id2", "id3", "id4"]
+
+    def next_id(self):
+        self.index += 1
+        return self.ids[self.index]
 
 
 def normalise_white_space(raw: str):
@@ -58,18 +69,18 @@ def test_content_panel_transform():
             <div class="column col-9">
                 <h2>Example</h2>
                 <p>Paragraph 1
-                    <button class="hpyc-more" id="bt2" onclick="expand('bt2','ct2')"></button>
+                    <button class="hpyc-more" id="id1" onclick="expand('id1','id2')"></button>
                 </p>
-                <p>Paragraph Two
-                </p>
+                <div id="id2" style="display: none;">
+                    <p>Paragraph Two
+                    </p>
             </div>
         </div>
       """).strip()
 
-    transformer = Transformer(ContentPanelTransformer())
+    transformer = Transformer(ContentPanelTransformer(FixedIdGenerator()))
     transformed = transformer.transform(raw)
     assert transformed.strip() == expected
-
 
 # todo - this test is too hard to maintain
 # maybe just check snippets

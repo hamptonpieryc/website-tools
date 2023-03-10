@@ -1,5 +1,12 @@
 from html_transformer import Transform
 from html_transformer import NestedTransform
+import random
+import string
+
+
+class IdGenerator:
+    def next_id(self):
+        return ''.join(random.sample(string.ascii_lowercase, 6))
 
 
 class TopPanelTransformer(Transform):
@@ -58,8 +65,9 @@ class ContentPanelTransformer(Transform):
     </div>
     """
 
-    def __init__(self):
+    def __init__(self, id_gen: IdGenerator = IdGenerator()):
         Transform.__init__(self, 'hpyc-content-panel')
+        self.id_gen = id_gen
 
     def transform(self, nodes: list) -> str:
         header = '???'
@@ -90,14 +98,35 @@ class ContentPanelTransformer(Transform):
         result += '\t<div class=\"column col-9\">\n'
         result += '\t\t<h2>' + header + '</h2>\n'
 
-        first_para = True
-        for para in paras:
-            result += '\t\t<p>' + para + '\n'
-            if first_para and len(paras) > 1:
-                result += '\t\t\t<button class="hpyc-more" id="bt2" onclick="expand(\'bt2\',\'ct2\')"></button>\n'
+        if len(paras) == 1:
+            result += '\t\t<p>' + paras[0] + '\n\t\t</p>\n'
+        elif len(paras) > 1:
+            button_id = self.id_gen.next_id()
+            more_content_id = self.id_gen.next_id()
+            result += '\t\t<p>' + paras.pop(0)
+            result += '\n\t\t\t<button class="hpyc-more" id="' + button_id \
+                      + '" onclick="expand(\'' + button_id + '\',\'' + more_content_id + '\')"></button>\n'
             result += '\t\t</p>\n'
-            first_para = False
+            result += '\t\t<div id="' + more_content_id + '" style="display: none;">\n'
+            #paras.pop(0)
+            for para in paras:
+                result += '\t\t\t<p>' + paras[0] + '\n\t\t\t</p>\n'
 
+
+
+
+
+        # class ="hpyc-more" id="bt2" onclick="expand('bt2','ct2')" > < / button >
+        #
+        # result += '\t\t<p>' + paras[0] + '</p>\n'
+        #
+        # if len(paras > 1):
+        #     for para in paras.pop(0):
+        #         result += '\t\t<p>' + para + '\n'
+        #         if first_para and len(paras) > 1:
+        #             result += '\t\t\t<button class="hpyc-more" id="bt2" onclick="expand(\'bt2\',\'ct2\')"></button>\n'
+        #     result += '\t\t</p>\n'
+        #     first_para = False
 
         """
           <div class="column col-3 ">
