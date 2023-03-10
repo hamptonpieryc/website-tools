@@ -110,7 +110,10 @@ class ContentPanelTransformer(Transform):
             result += '\t\t<div id="' + more_content_id + '" style="display: none;">\n'
             #paras.pop(0)
             for para in paras:
-                result += '\t\t\t<p>' + paras[0] + '\n\t\t\t</p>\n'
+                result += '\t\t\t<p>' + para + '\n\t\t\t</p>\n'
+
+            result += '\t\t</div>\n'
+
 
 
 

@@ -56,6 +56,7 @@ def test_content_panel_transform():
             <header>Example</header>
             <p>Paragraph 1</p>
             <p>Paragraph Two</p>
+            <p>Last Paragraph</p>
             <img href=\"image.jpg\"></img>
         </hpyc-content-panel>""")
 
@@ -74,6 +75,9 @@ def test_content_panel_transform():
                 <div id="id2" style="display: none;">
                     <p>Paragraph Two
                     </p>
+                    <p>Last Paragraph
+                    </p>
+                </div>
             </div>
         </div>
       """).strip()
