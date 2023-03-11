@@ -108,16 +108,17 @@ class ContentPanelTransformer(Transform):
                       + '" onclick="expand(\'' + button_id + '\',\'' + more_content_id + '\')"></button>\n'
             result += '\t\t</p>\n'
             result += '\t\t<div id="' + more_content_id + '" style="display: none;">\n'
-            #paras.pop(0)
+            # paras.pop(0)
+
             for para in paras:
-                result += '\t\t\t<p>' + para + '\n\t\t\t</p>\n'
+                result += '\t\t\t<p>' + para
+                if para == paras[-1]:
+                    result += '\n\t\t\t\t<button class="hpyc-less" onclick="collapse(\'' \
+                              + button_id + '\',\'' + more_content_id + '\')"></button>'
+
+                result += '\n\t\t\t</p>\n'
 
             result += '\t\t</div>\n'
-
-
-
-
-
 
         # class ="hpyc-more" id="bt2" onclick="expand('bt2','ct2')" > < / button >
         #

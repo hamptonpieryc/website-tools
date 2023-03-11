@@ -76,6 +76,7 @@ def test_content_panel_transform():
                     <p>Paragraph Two
                     </p>
                     <p>Last Paragraph
+                        <button class="hpyc-less" onclick="collapse('id1','id2')"></button>
                     </p>
                 </div>
             </div>
