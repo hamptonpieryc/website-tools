@@ -1,6 +1,7 @@
 from os import makedirs
 
 from textwrap import dedent
+from test_html_transformer import FooTransform
 import random
 import string
 
@@ -22,7 +23,6 @@ def create_test_directories():
 
 
 def read_text_file(filename: str) -> str:
-    content = ''
     with open(filename, "r") as f:
         content = ''.join(f.readlines())
     return content
@@ -43,13 +43,13 @@ def test_should_apply_layout_to_file():
     """).strip()
 
     page1 = dedent("""
-            <p>Hello World</p>
+            <foo><p>Hello World</p></foo>
     """).strip()
 
     expected = dedent("""
                 <html>
                 <body>
-                    <div><p>Hello World</p></div>
+                    <div><div>HELLO WORLD</div></div>
                 </body>
                 </html>
         """).strip()
@@ -59,10 +59,8 @@ def test_should_apply_layout_to_file():
     create_text_file(test_dirs[0] + '/layout.html', layout)
     create_text_file(test_dirs[0] + '/content/page1.html', page1)
 
-    pipeline = Pipeline(test_dirs[0], test_dirs[1])
+    pipeline = Pipeline(test_dirs[0], test_dirs[1], [FooTransform()])
     pipeline.run()
 
     processed = read_text_file(test_dirs[1] + '/page1.html')
-    print(processed)
-
     assert processed == expected
