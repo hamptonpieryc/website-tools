@@ -1,14 +1,15 @@
 from textwrap import dedent
-from hpyc_transformers import TopPanelTransformer, ContentPageTransformer, ContentPanelTransformer, IdGenerator
+from hpyc_transformers import TopPanelTransformer, ContentPanelTransformer, IdGenerator
 from html_transformer import Transformer
 import re
 
 
 class FixedIdGenerator(IdGenerator):
+    """Make it easy to control the ids generated within the transformed HTML"""
 
     def __init__(self):
         self.index = -1
-        self.ids = ["id1", "id2", "id3", "id4"]
+        self.ids = ["id1", "id2", "id3", "id4", "id5"]
 
     def next_id(self):
         self.index += 1

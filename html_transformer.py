@@ -4,9 +4,10 @@ from html_parser import BaseParser
 
 
 class Transform:
-    """A base class for running transforms. Override the transform method"""
+    """A base class for running transforms over html content. Override the transform method"""
 
     def __init__(self, outer_tag: str):
+        """Create a new Transform, specifying the tag to be replaced"""
         self.outer_tag = outer_tag
 
     def transform(self, nodes: list) -> str:
@@ -17,7 +18,7 @@ class Transform:
 class NestedTransform(Transform):
     """A transform that nests one or more inner transforms"""
 
-    def __init__(self, outer_tag, transforms):
+    def __init__(self, outer_tag: str, transforms: list):
         self.outer_tag = outer_tag
         self.transforms = transforms
 
