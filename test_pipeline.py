@@ -33,7 +33,12 @@ def create_text_file(filename: str, content: str):
         f.write(content)
 
 
-def test_should_apply_layout_to_file():
+def create_binary_file(filename: str, content: bytearray):
+    with open(filename, 'wb') as f:
+        f.write(content)
+
+
+def test_apply_layout_to_html_file():
     layout = dedent("""
             <html>
             <body>
@@ -64,3 +69,12 @@ def test_should_apply_layout_to_file():
 
     processed = read_text_file(test_dirs[1] + '/page1.html')
     assert processed == expected
+
+
+def test_ignore_non_html_files():
+    test_dirs = create_test_directories()
+    create_text_file(test_dirs[0] + '/layout.html', "dummy layout")
+    create_binary_file(test_dirs[0] + '/content/foo.bar', bytearray(b'ABCD'))
+
+    pipeline = Pipeline(test_dirs[0], test_dirs[1], [FooTransform()])
+    pipeline.run()
