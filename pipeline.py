@@ -24,15 +24,13 @@ class Pipeline:
 
         for i in files:
             with open(self.input_dir + '/content/' + i, "r") as f:
+                print("Processing content in: " + i)
                 raw = ''.join(f.readlines())
 
                 # nested = NestedTransform(outer_tag='nested', transforms=[FooTransform(), BarTransform()])
                 buffer = []
                 parser = TransformingParser(buffer, self.transformers)
                 parser.feed(raw)
-
-                # transformer = Transformer(ContentPageTransformer())
-                # transformed = transformer.transform(raw)
 
                 with open(self.output_dir + "/" + i, "w") as saved:
                     processed = layout.replace("REPLACE-ME!", ''.join(buffer))

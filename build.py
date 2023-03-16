@@ -20,7 +20,7 @@ with open("templates/layout.html", "r") as f:
 print("layout.html is " + str(len(layout)) + " characters")
 
 files = []
-for (dirpath, dirnames, filenames) in walk("content"):
+for (dirpath, dirnames, filenames) in walk("test_content"):
     files.extend(filenames)
     break
 

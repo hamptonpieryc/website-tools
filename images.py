@@ -23,14 +23,14 @@ def crop_best_letterbox(pil_img):
 
 
 thumb_width = 300
-crop_best_square(Image.open('content/images/kayak.png')) \
+crop_best_square(Image.open('test_content/images/kayak.png')) \
     .resize((thumb_width, thumb_width), Image.LANCZOS) \
     .save('kayak-square.png', quality=95)
 
-crop_best_square(Image.open('content/images/discover-sailing.png')) \
+crop_best_square(Image.open('test_content/images/discover-sailing.png')) \
     .resize((thumb_width, thumb_width), Image.LANCZOS) \
     .save('discover-sailing-square.png', quality=95)
 
-crop_best_square(Image.open('content/images/pubquiz.jpeg')) \
+crop_best_square(Image.open('test_content/images/pubquiz.jpeg')) \
     .resize((thumb_width, thumb_width), Image.LANCZOS) \
     .save('pubquiz-square.jpeg', quality=95)
